@@ -20,8 +20,10 @@ function task(options) {
 			compilerOptions: compilerOptions,
 			fileName: event.path
 		});
-		var {outputText: data, sourceMapText: sourceMap} = result;
-		return {data, sourceMap};
+		return {
+			data: result.outputText,
+			sourceMap: result.sourceMapText
+		};
 	};
 }
 
