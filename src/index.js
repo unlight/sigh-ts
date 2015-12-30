@@ -25,13 +25,21 @@ function task(options) {
 	};
 }
 
-function adaptEvent(compiler) {
-	// data sent to/received from the subprocess has to be serialised/deserialised
-	return event => {
+
+
+var proc;
+
+export default function(op, options = {}) {
+	if (!proc) {
+		proc = op.procPool.prepare(task, options, {module});
+	}
+	
+	return mapEvents(op.stream, event => {
+		// data sent to/received from the subprocess has to be serialised/deserialised
 		if (event.type !== "add" && event.type !== "change") return event;
 		if (event.fileType !== "ts") return event;
 
-		return compiler(pick(event, "type", "data", "path", "projectPath")).then(result => {
+		return proc(pick(event, "type", "data", "path", "projectPath")).then(result => {
 			event.data = result.data;
 			if (result.sourceMap) {
 				event.applySourceMap(JSON.parse(result.sourceMap));
@@ -39,14 +47,5 @@ function adaptEvent(compiler) {
 			event.changeFileSuffix("js");
 			return event;
 		});
-	};
+	});
 }
-
-var pooledProc;
-
-export default function(op, options = {}) {
-	if (!pooledProc) {
-		pooledProc = op.procPool.prepare(task, options, {module});
-	}
-	return mapEvents(op.stream, adaptEvent(pooledProc));
-};
