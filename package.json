@@ -1,6 +1,6 @@
 {
   "name": "sigh-ts",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A sigh plugin to compile typescript files.",
   "main": "lib",
   "scripts": {},
@@ -16,5 +16,18 @@
     "babel": "^5.8.38",
     "sigh": "^0.12.29",
     "sigh-babel": "^0.11.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unlight/sigh-ts.git"
+  },
+  "keywords": [
+    "sigh",
+    "typescript"
+  ],
+  "author": "S",
+  "bugs": {
+    "url": "https://github.com/unlight/sigh-ts/issues"
+  },
+  "homepage": "https://github.com/unlight/sigh-ts#readme"
 }

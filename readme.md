@@ -1,14 +1,12 @@
-# sigh-ts
+sigh-ts
+=======
 A sigh plugin to compile typescript files.
 
 EXAMPLE
 -------
 ```js
-var globOpts = {
-	basePath: "src"
-};
 pipelines["build"] = [
-	glob(globOpts, "**/*.ts"),
+	glob({basePath: "src"}, "**/*.ts"),
 	ts(),
 	write("dist")
 ];
