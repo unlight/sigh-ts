@@ -1,12 +1,13 @@
-import {pick} from "lodash";
+import {pick, assign, get} from "lodash";
 import {mapEvents} from "sigh-core/lib/stream";
+import {existsSync, readFileSync} from "fs";
 
 function task(options) {
 	// This function is called once for each subprocess in order to cache state,
 	// it is not a closure and does not have access to the surrounding state, use
 	// `require` to include any modules you need, for further info see
 	// https://github.com/ohjames/process-pool
-	var log = require("sigh-core").log;
+	// var log = require("sigh-core").log;
 	var typescript = require("typescript");
 	var _ = require("lodash");
 
@@ -39,6 +40,11 @@ var proc;
 
 export default function(op, options = {}) {
 	if (!proc) {
+		if (existsSync("tsconfig.json")) {
+			var tsconfig = require("./tsconfig.json");
+			var compilerOptions = get(tsconfig, 'compilerOptions', {});
+			options = assign({}, compilerOptions, options)
+		}
 		proc = op.procPool.prepare(task, options, {module});
 	}
 	
