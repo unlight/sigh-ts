@@ -24,6 +24,12 @@
     "type": "git",
     "url": "git+https://github.com/unlight/sigh-ts.git"
   },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  },
   "keywords": [
     "sigh",
     "sigh-plugin",
