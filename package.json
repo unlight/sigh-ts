@@ -2,7 +2,7 @@
   "name": "sigh-ts",
   "version": "0.0.3",
   "description": "A sigh plugin to compile typescript files.",
-  "main": "lib",
+  "main": "./lib",
   "scripts": {
     "test": "ava"
   },
@@ -11,14 +11,18 @@
     "typescript": ">1.6.0"
   },
   "dependencies": {
-    "lodash": "^4.12.0",
-    "sigh-core": "^0.11.6"
+    "lodash": "^4.14.0",
+    "pkg-dir": "^1.0.0",
+    "sigh-core": "^0.11.14"
   },
   "devDependencies": {
     "ava": "^0.15.2",
-    "babel": "^5.8.38",
-    "sigh": "^0.12.29",
-    "sigh-babel": "^0.11.7"
+    "babel": "^6.5.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.11.5",
+    "process-pool": "^0.3.4",
+    "sigh": "^0.12.32",
+    "sigh-babel": "^0.12.1",
+    "typescript": "^1.8.10"
   },
   "repository": {
     "type": "git",

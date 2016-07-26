@@ -1,6 +1,7 @@
 import {pick, assign, get} from "lodash";
 import {mapEvents} from "sigh-core/lib/stream";
 import {existsSync, readFileSync} from "fs";
+import pkgDir from "pkg-dir";
 
 function task(options) {
 	// This function is called once for each subprocess in order to cache state,
@@ -40,10 +41,12 @@ var proc;
 
 export default function(op, options = {}) {
 	if (!proc) {
-		if (existsSync("tsconfig.json")) {
-			var tsconfig = require("./tsconfig.json");
+		var rootDirectory = pkgDir.sync();
+		var tsconfigFile = rootDirectory + "/tsconfig.json";
+		if (existsSync(tsconfigFile)) {
+			var tsconfig = require(tsconfigFile);
 			var compilerOptions = get(tsconfig, 'compilerOptions', {});
-			options = assign({}, compilerOptions, options)
+			options = assign({}, compilerOptions, options);
 		}
 		proc = op.procPool.prepare(task, options, {module});
 	}
@@ -61,3 +64,5 @@ export default function(op, options = {}) {
 		});
 	});
 }
+
+module.exports = exports["default"];
