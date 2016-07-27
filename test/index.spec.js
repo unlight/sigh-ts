@@ -29,7 +29,7 @@ test("smoke test", t => {
 
 test("options", t => {
 	var op = {stream: t.context.stream, procPool: t.context.procPool};
-	var options = {target: "es6", "module": "es2015"};
+	var options = {target: "es6", "module": "es2015", reportDiagnostics: true};
 	return lib(op, options).toPromise().then(events => {
 		var data = get(events, "0.data");
 		t.truthy(data.indexOf('export var Hello') !== -1);

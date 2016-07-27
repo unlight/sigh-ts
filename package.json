@@ -21,6 +21,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.11.5",
     "process-pool": "^0.3.4",
     "sigh": "^0.12.32",
+    "sigh-ava": "^0.3.1",
     "sigh-babel": "^0.12.1",
     "typescript": "^1.8.10"
   },
