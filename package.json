@@ -4,7 +4,7 @@
   "description": "A sigh plugin to compile typescript files.",
   "main": "./lib",
   "scripts": {
-    "test": "ava"
+    "test": "ava --serial"
   },
   "license": "Xnet",
   "peerDependencies": {

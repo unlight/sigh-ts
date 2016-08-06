@@ -23,6 +23,7 @@ with some extra properties:
 
 CHANGELOG
 ---------
+* 0.0.6 (06 Aug 2016) allow emit declaration files, log errors
 * 0.0.5 (27 Jul 2016) logging and reportDiagnostics option
 * 0.0.4 (25 Jul 2016) support `tsconfig.json`
 * 0.0.3 (18 May 2016) updated examples
