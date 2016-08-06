@@ -1,5 +1,4 @@
-import {mapEvents} from "sigh-core/lib/stream";
-import {log, Bacon, Event} from "sigh-core";
+import {log, Event} from "sigh-core";
 import {existsSync, readFileSync} from "fs";
 import pkgDir from "pkg-dir";
 import ts from "typescript";
