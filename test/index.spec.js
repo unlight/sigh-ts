@@ -3,7 +3,7 @@ import { Bacon } from "sigh-core";
 import Event from "sigh-core/lib/Event";
 import lib from "..";
 import ProcessPool from "process-pool";
-import {get} from "lodash";
+import {get, find} from "lodash";
 
 test.beforeEach(t => {
     var event = new Event({
@@ -71,5 +71,30 @@ test("log errors", t => {
     var options = { target: "es5", "module": "commonjs", reportDiagnostics: true, declaration: false, sourceMap: false };
     return lib(op, options).toPromise().then(events => {
         var data = get(events, "0.data");
+    });
+});
+
+test("remove event and declaration", t => {
+    var op = {
+        stream: Bacon.constant([
+            new Event({
+                basePath: "root",
+                path: "dir/file.ts",
+                type: "add",
+                data: "class A {}"
+            }),
+            new Event({
+                basePath: "root",
+                path: "dir/file.ts",
+                type: "remove",
+                data: "class A {}"
+            })
+        ]),
+        procPool: t.context.procPool
+    };
+    var options = { target: "es5", "module": "commonjs", reportDiagnostics: true, declaration: true, sourceMap: true };
+    return lib(op, options).toPromise().then(events => {
+        var removed = find(events, event => event.path === "dir/file.d.ts");
+        t.truthy(removed);
     });
 });

@@ -14,15 +14,15 @@ pipelines["build"] = [
 
 API
 ---
-`ts(options)`
-
-`options` is key-value object which is referencing to [typescript compiler options](http://www.typescriptlang.org/docs/handbook/compiler-options.html)
-with some extra properties:
-
-* reportDiagnostics: boolean - echo diagnostic messages (default: false)
+```js
+ts(options)
+```
+`options` is key-value object which is 
+referencing to [typescript compiler options](http://www.typescriptlang.org/docs/handbook/compiler-options.html)
 
 CHANGELOG
 ---------
+* 0.0.7 (07 Aug 2016) fixed removing declaration files 
 * 0.0.6 (06 Aug 2016) allow emit declaration files, log errors
 * 0.0.5 (27 Jul 2016) logging and reportDiagnostics option
 * 0.0.4 (25 Jul 2016) support `tsconfig.json`

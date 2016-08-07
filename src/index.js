@@ -26,51 +26,53 @@ export default function (op, compilerOptions = {}) {
         getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options)
     };
     // Create the language service files
-    const services = ts.createLanguageService(servicesHost, ts.createDocumentRegistry());
+    const service = ts.createLanguageService(servicesHost, ts.createDocumentRegistry());
 
-    logDiagnostics(services.getCompilerOptionsDiagnostics());
+    logDiagnostics(service.getCompilerOptionsDiagnostics());
 
     function eventCallback(event, index, events) {
+        var eventPath = event.path;
         switch (event.type) {
             case "add":
-                files[event.path] = {};
-                files[event.path].version = 0;
-                files[event.path].data = event.data;
-                break;
+                files[eventPath] = {};
+                files[eventPath].version = 0;
             case "change":
-                files[event.path].version++;
-                files[event.path].data = event.data;
-                break;
-            case "remove":
-                delete files[event.path];
-                break;
-        }
-        if (event.type === "add" || event.type === "change") {
-            var {outputFiles, emitSkipped} = services.getEmitOutput(event.path);
-            for (var i = 0; i < outputFiles.length; i++) {
-                var outfile = outputFiles[i];
-                if (_.endsWith(outfile.name, ".js")) {
-                    event.data = outfile.text;
-                } else if (_.endsWith(outfile.name, ".js.map")) {
-                    event.applySourceMap(JSON.parse(outfile.text));
-                } else if (_.endsWith(outfile.name, ".d.ts")) {
+                files[eventPath].version++;
+                files[eventPath].data = event.data;
+                var {outputFiles, emitSkipped} = service.getEmitOutput(eventPath);
+                var {jsFile, mapFile, dtsFile} = parseOutputFiles(outputFiles);
+                event.data = jsFile.text;
+                if (mapFile) {
+                    event.applySourceMap(JSON.parse(mapFile.text));
+                }
+                if (dtsFile) {
                     var fields = _.pick(event, ["type", "basePath", "data", "path"]);
-                    fields.data = outfile.text;
+                    fields.data = dtsFile.text;
                     var newEvent = new Event(fields);
                     newEvent.changeFileSuffix("d.ts");
                     events.push(newEvent);
+                    files[eventPath].dtsFile = newEvent.path;
                 }
-            }
-            // Log diagnostics.
-            var diagnostics = []
-                .concat(services.getSyntacticDiagnostics(event.path))
-                .concat(services.getSemanticDiagnostics(event.path));
-
-            logDiagnostics(diagnostics);
-
-            if (emitSkipped) {
-                log.warn(`Emit of ${event.path} failed (fatal errors).`);
-            }
+                // Log diagnostics.
+                var diagnostics = []
+                    .concat(service.getSyntacticDiagnostics(eventPath))
+                    .concat(service.getSemanticDiagnostics(eventPath));
+                logDiagnostics(diagnostics);
+                // Log fatal error.
+                if (emitSkipped) {
+                    log.warn(`Emit of ${eventPath} failed (fatal errors).`);
+                }
+                break;
+            case "remove":
+                var dtsFile = _.get(files[eventPath], "dtsFile");
+                if (dtsFile) {
+                    var dtsFileEvent = _.find(events, event => event.path === dtsFile);
+                    if (dtsFileEvent) {
+                        dtsFileEvent.type = "remove";
+                    }
+                }
+                delete files[eventPath];
+                break;
         }
         return event;
     }
@@ -81,8 +83,15 @@ export default function (op, compilerOptions = {}) {
     });
 }
 
+function parseOutputFiles(outputFiles) {
+    var jsFile = _.find(outputFiles, f => _.endsWith(f.name, ".js"));
+    var mapFile = _.find(outputFiles, f => _.endsWith(f.name, ".js.map"));
+    var dtsFile = _.find(outputFiles, f => _.endsWith(f.name, ".d.ts"));
+    return { jsFile, mapFile, dtsFile };
+}
+
 function logDiagnostics(diagnostics) {
-    _.forEach(diagnostics, d => {
+    diagnostics.forEach(d => {
         var message = ts.flattenDiagnosticMessageText(d.messageText, "\n");
         if (d.file) {
             var { line, character } = d.file.getLineAndCharacterOfPosition(d.start);
