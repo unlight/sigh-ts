@@ -42,6 +42,7 @@ export default function (op, compilerOptions = {}) {
                 var {outputFiles, emitSkipped} = service.getEmitOutput(eventPath);
                 var {jsFile, mapFile, dtsFile} = parseOutputFiles(outputFiles);
                 event.data = jsFile.text;
+                event.changeFileSuffix("js");
                 if (mapFile) {
                     event.applySourceMap(JSON.parse(mapFile.text));
                 }
@@ -95,7 +96,7 @@ function logDiagnostics(diagnostics) {
         var message = ts.flattenDiagnosticMessageText(d.messageText, "\n");
         if (d.file) {
             var { line, character } = d.file.getLineAndCharacterOfPosition(d.start);
-            let lineText = `${d.file.fileName}:${line + 1}:${character + 1}`;
+            let lineText = `${d.file.fileName}:${line}:${character + 1}`;
             message = `${lineText} ${message}`;
         }
         message = message.trim();

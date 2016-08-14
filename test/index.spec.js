@@ -3,7 +3,7 @@ import { Bacon } from "sigh-core";
 import Event from "sigh-core/lib/Event";
 import lib from "..";
 import ProcessPool from "process-pool";
-import {get, find} from "lodash";
+import _ from "lodash";
 
 test.beforeEach(t => {
     var event = new Event({
@@ -29,7 +29,7 @@ test("options", t => {
     var op = { stream: t.context.stream, procPool: t.context.procPool };
     var options = { target: "es6", "module": "es2015", reportDiagnostics: true };
     return lib(op, options).toPromise().then(events => {
-        var data = get(events, "0.data");
+        var data = _.get(events, "0.data");
         t.truthy(data.indexOf('export var Hello') !== -1);
     });
 });
@@ -48,8 +48,8 @@ test("declaration", t => {
     };
     var options = { target: "es5", "module": "commonjs", reportDiagnostics: true, declaration: true, sourceMap: true };
     return lib(op, options).toPromise().then(events => {
-        var data = get(events, "0.data");
-        var definition = get(events, "1.data");
+        var data = _.get(events, "0.data");
+        var definition = _.get(events, "1.data");
         t.is(events.length, 2);
         t.truthy(definition.indexOf("declare class A") !== -1);
     });
@@ -70,7 +70,7 @@ test("log errors", t => {
     };
     var options = { target: "es5", "module": "commonjs", reportDiagnostics: true, declaration: false, sourceMap: false };
     return lib(op, options).toPromise().then(events => {
-        var data = get(events, "0.data");
+        var data = _.get(events, "0.data");
     });
 });
 
@@ -94,7 +94,7 @@ test("remove event and declaration", t => {
     };
     var options = { target: "es5", "module": "commonjs", reportDiagnostics: true, declaration: true, sourceMap: true };
     return lib(op, options).toPromise().then(events => {
-        var removed = find(events, event => event.path === "dir/file.d.ts");
+        var removed = _.find(events, event => event.path === "dir/file.d.ts");
         t.truthy(removed);
     });
 });
@@ -113,6 +113,25 @@ test("module resolution node", t => {
     };
     var options = { target: "es5", "module": "commonjs", moduleResolution: "node" };
     return lib(op, options).toPromise().then(events => {
-        var data = get(events, "0.data");
+        var data = _.get(events, "0.data");
+    });
+});
+
+test("suffix should be js", t => {
+    var op = {
+        stream: Bacon.constant([
+            new Event({
+                basePath: "root",
+                path: "dir/file.ts",
+                type: "add",
+                data: "class A {}"
+            })
+        ]),
+        procPool: t.context.procPool
+    };
+    var options = { target: "es5", "module": "commonjs", moduleResolution: "node" };
+    return lib(op, options).toPromise().then(events => {
+        var [event1] = events;
+        t.true(_.endsWith(event1.path, ".js"));
     });
 });

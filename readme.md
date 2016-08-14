@@ -22,6 +22,7 @@ referencing to [typescript compiler options](http://www.typescriptlang.org/docs/
 
 CHANGELOG
 ---------
+* 0.0.9 (14 Aug 2016) fixed bug change extension to js  
 * 0.0.8 (14 Aug 2016) fixed option moduleResolution 
 * 0.0.7 (07 Aug 2016) fixed removing declaration files 
 * 0.0.6 (06 Aug 2016) allow emit declaration files, log errors
