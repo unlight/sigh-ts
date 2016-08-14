@@ -98,3 +98,21 @@ test("remove event and declaration", t => {
         t.truthy(removed);
     });
 });
+
+test("module resolution node", t => {
+    var op = {
+        stream: Bacon.constant([
+            new Event({
+                basePath: "root",
+                path: "dir/file.ts",
+                type: "add",
+                data: "class A {}"
+            })
+        ]),
+        procPool: t.context.procPool
+    };
+    var options = { target: "es5", "module": "commonjs", moduleResolution: "node" };
+    return lib(op, options).toPromise().then(events => {
+        var data = get(events, "0.data");
+    });
+});

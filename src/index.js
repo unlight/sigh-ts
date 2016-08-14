@@ -100,7 +100,7 @@ function logDiagnostics(diagnostics) {
         }
         message = message.trim();
         if (d.category === 0 || d.category === 1) {
-            log.warn(message.trim());
+            log.warn(message);
         } else {
             log(message);
         }
@@ -118,6 +118,12 @@ function getCompilerOptions(options = {}) {
     }
     if (options.module) {
         options.module = getEnumOption(ts.ModuleKind, options.module);
+    }
+    if (options.moduleResolution) {
+        if (String(options.moduleResolution).toLocaleLowerCase() === "node") {
+            options.moduleResolution = "NodeJs";
+        }
+        options.moduleResolution = getEnumOption(ts.ModuleResolutionKind, options.moduleResolution);
     }
     if (options.inlineSourceMap || options.sourceMap) {
         options.inlineSources = true;
