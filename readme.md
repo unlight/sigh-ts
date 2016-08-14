@@ -22,6 +22,7 @@ referencing to [typescript compiler options](http://www.typescriptlang.org/docs/
 
 CHANGELOG
 ---------
+* 0.0.10 (15 Aug 2016) fixed error Cannot read property 'version' of undefined  
 * 0.0.9 (14 Aug 2016) fixed bug change extension to js  
 * 0.0.8 (14 Aug 2016) fixed option moduleResolution 
 * 0.0.7 (07 Aug 2016) fixed removing declaration files 

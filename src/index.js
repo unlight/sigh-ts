@@ -34,11 +34,14 @@ export default function (op, compilerOptions = {}) {
         var eventPath = event.path;
         switch (event.type) {
             case "add":
-                files[eventPath] = {};
-                files[eventPath].version = 0;
             case "change":
-                files[eventPath].version++;
-                files[eventPath].data = event.data;
+                var info = files[eventPath]; 
+                if (!info) {
+                    info = { version: 0, data: "", dtsFile: null};
+                    files[eventPath] = info;
+                }
+                info.version++;
+                info.data = event.data;
                 var {outputFiles, emitSkipped} = service.getEmitOutput(eventPath);
                 var {jsFile, mapFile, dtsFile} = parseOutputFiles(outputFiles);
                 event.data = jsFile.text;
@@ -52,7 +55,7 @@ export default function (op, compilerOptions = {}) {
                     var newEvent = new Event(fields);
                     newEvent.changeFileSuffix("d.ts");
                     events.push(newEvent);
-                    files[eventPath].dtsFile = newEvent.path;
+                    info.dtsFile = newEvent.path;
                 }
                 // Log diagnostics.
                 var diagnostics = []
@@ -65,7 +68,7 @@ export default function (op, compilerOptions = {}) {
                 }
                 break;
             case "remove":
-                var dtsFile = _.get(files[eventPath], "dtsFile");
+                var dtsFile = _.get(info, "dtsFile");
                 if (dtsFile) {
                     var dtsFileEvent = _.find(events, event => event.path === dtsFile);
                     if (dtsFileEvent) {
