@@ -16,6 +16,7 @@ export default function (op, compilerOptions = {}) {
             if (files[filepath]) {
                 data = files[filepath].data;
             } else {
+                // TODO: Too slow. Read package.json and restrict finding.
                 if (!existsSync(filepath)) return undefined;
                 data = readFileSync(filepath).toString();
             }
@@ -23,7 +24,26 @@ export default function (op, compilerOptions = {}) {
         },
         getCurrentDirectory: _.constant(process.cwd()),
         getCompilationSettings: _.constant(compilerOptions),
-        getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options)
+        getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
+        // directoryExists: _.constant(true),
+        // getProjectVersion: _.constant(1)
+        // getCompilationSettings(): CompilerOptions;
+        // getNewLine?(): string;
+        // getProjectVersion?(): string;
+        // getScriptFileNames(): string[];
+        // getScriptKind?(fileName: string): ScriptKind;
+        // getScriptVersion(fileName: string): string;
+        // getScriptSnapshot(fileName: string): IScriptSnapshot;
+        // getLocalizedDiagnosticMessages?(): any;
+        // getCancellationToken?(): HostCancellationToken;
+        // getCurrentDirectory(): string;
+        // getDefaultLibFileName(options: CompilerOptions): string;
+        // log?(s: string): void;
+        // trace?(s: string): void;
+        // error?(s: string): void;
+        // useCaseSensitiveFileNames?(): boolean;
+        // resolveModuleNames?(moduleNames: string[], containingFile: string): ResolvedModule[];
+        // directoryExists?(directoryName: string): boolean;
     };
     // Create the language service files
     const service = ts.createLanguageService(servicesHost, ts.createDocumentRegistry());
