@@ -115,7 +115,7 @@ function getCompilerOptions(options = {}) {
     var tsconfigFile = pkgDir.sync() + "/tsconfig.json";
     if (existsSync(tsconfigFile)) {
         var tsconfig = require(tsconfigFile);
-        _.assign(options, _.get(tsconfig, "compilerOptions", {}));
+        options = _.assign({}, _.get(tsconfig, "compilerOptions", {}), options);
     }
     if (options.target) {
         options.target = getEnumOption(ts.ScriptTarget, options.target);
