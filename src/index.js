@@ -1,54 +1,43 @@
 import {log, Event} from "sigh-core";
 import {existsSync, readFileSync} from "fs";
+import * as path from "path";
 import pkgDir from "pkg-dir";
 import ts from "typescript";
 import _ from "lodash";
+import logdiagnostics from "./logdiagnostics";
+
+const npmPackage = pkgDir.sync();
+const typingsIndex = path.resolve(npmPackage, "typings/index.d.ts");
 
 export default function (op, compilerOptions = {}) {
     compilerOptions = getCompilerOptions(compilerOptions);
+    var logd = _.get(compilerOptions, "logd", logdiagnostics);
     var files = {};
+    var _existsSync = _.memoize(existsSync);
+    var _readFileSync = _.memoize(readFileSync);
     // Create the language service host to allow the LS to communicate with the host
     const servicesHost = {
-        getScriptFileNames: () => _.keys(files),
+        getScriptFileNames: () => [typingsIndex, ...Object.keys(files)],
         getScriptVersion: (filepath) => files[filepath] && files[filepath].version.toString(),
         getScriptSnapshot: (filepath) => {
             var data = "";
             if (files[filepath]) {
                 data = files[filepath].data;
+            } else if (!_existsSync(filepath)) {
+                return undefined;
             } else {
-                // TODO: Too slow. Read package.json and restrict finding.
-                if (!existsSync(filepath)) return undefined;
-                data = readFileSync(filepath).toString();
+                data = _readFileSync(filepath, "utf8");
             }
             return ts.ScriptSnapshot.fromString(data);
         },
         getCurrentDirectory: _.constant(process.cwd()),
         getCompilationSettings: _.constant(compilerOptions),
         getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
-        // directoryExists: _.constant(true),
-        // getProjectVersion: _.constant(1)
-        // getCompilationSettings(): CompilerOptions;
-        // getNewLine?(): string;
-        // getProjectVersion?(): string;
-        // getScriptFileNames(): string[];
-        // getScriptKind?(fileName: string): ScriptKind;
-        // getScriptVersion(fileName: string): string;
-        // getScriptSnapshot(fileName: string): IScriptSnapshot;
-        // getLocalizedDiagnosticMessages?(): any;
-        // getCancellationToken?(): HostCancellationToken;
-        // getCurrentDirectory(): string;
-        // getDefaultLibFileName(options: CompilerOptions): string;
-        // log?(s: string): void;
-        // trace?(s: string): void;
-        // error?(s: string): void;
-        // useCaseSensitiveFileNames?(): boolean;
-        // resolveModuleNames?(moduleNames: string[], containingFile: string): ResolvedModule[];
-        // directoryExists?(directoryName: string): boolean;
     };
     // Create the language service files
     const service = ts.createLanguageService(servicesHost, ts.createDocumentRegistry());
 
-    logDiagnostics(service.getCompilerOptionsDiagnostics());
+    logd(service.getCompilerOptionsDiagnostics());
 
     function eventCallback(event, index, events) {
         var eventPath = event.path;
@@ -81,7 +70,7 @@ export default function (op, compilerOptions = {}) {
                 var diagnostics = []
                     .concat(service.getSyntacticDiagnostics(eventPath))
                     .concat(service.getSemanticDiagnostics(eventPath));
-                logDiagnostics(diagnostics);
+                logd(diagnostics);
                 // Log fatal error.
                 if (emitSkipped) {
                     log.warn(`Emit of ${eventPath} failed (fatal errors).`);
@@ -114,25 +103,8 @@ function parseOutputFiles(outputFiles) {
     return { jsFile, mapFile, dtsFile };
 }
 
-function logDiagnostics(diagnostics) {
-    diagnostics.forEach(d => {
-        var message = ts.flattenDiagnosticMessageText(d.messageText, "\n");
-        if (d.file) {
-            var { line, character } = d.file.getLineAndCharacterOfPosition(d.start);
-            let lineText = `${d.file.fileName}:${line + 1}:${character + 1}`;
-            message = `${lineText} ${message}`;
-        }
-        message = message.trim();
-        if (d.category === 0 || d.category === 1) {
-            log.warn(message);
-        } else {
-            log(message);
-        }
-    });
-}
-
 function getCompilerOptions(options = {}) {
-    var tsconfigFile = pkgDir.sync() + "/tsconfig.json";
+    var tsconfigFile = path.join(npmPackage, "tsconfig.json");
     if (existsSync(tsconfigFile)) {
         var tsconfig = require(tsconfigFile);
         options = _.assign({}, _.get(tsconfig, "compilerOptions", {}), options);

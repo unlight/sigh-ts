@@ -22,6 +22,7 @@ referencing to [typescript compiler options](http://www.typescriptlang.org/docs/
 
 CHANGELOG
 ---------
+* 0.0.13 (13 Sep 2016) memoized getScriptSnapshot, added typings support
 * 0.0.12 (12 Sep 2016) option in pipeline has more precedence than tsconfig
 * 0.0.11 (12 Sep 2016) fixed line number in diagnostic messages
 * 0.0.10 (15 Aug 2016) fixed error Cannot read property 'version' of undefined  

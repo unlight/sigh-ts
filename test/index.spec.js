@@ -135,3 +135,26 @@ test("suffix should be js", t => {
         t.true(_.endsWith(event1.path, ".js"));
     });
 });
+
+test("typings definitions should be used", t => {
+    var op = {
+        stream: Bacon.constant([
+            new Event({
+                basePath: "root",
+                path: "dir/file.ts",
+                type: "add",
+                data: "import * as fs from 'fs'; console.log(fs);"
+            })
+        ]),
+        procPool: t.context.procPool
+    };
+    var options = { target: "es5", "module": "commonjs", moduleResolution: "node" };
+    options.logd = function(messageList) {
+        var text = _.get(messageList, '0.messageText');
+        if (text) t.fail(text);
+    };
+    return lib(op, options).toPromise().then(events => {
+        var [event1] = events;
+        t.pass();
+    });
+});

@@ -1,7 +1,7 @@
 {
   "globalDependencies": {
-    "typescript": "registry:dt/typescript#0.4.0+20160317120654",
     "lodash": "registry:dt/lodash#4.14.0+20160802150749",
-    "node": "registry:dt/node#6.0.0+20160805072842"
+    "node": "registry:dt/node#6.0.0+20160909174046",
+    "typescript": "registry:dt/typescript#0.4.0+20160317120654"
   }
 }
