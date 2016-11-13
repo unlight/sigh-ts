@@ -26,8 +26,8 @@ export default function (op, compilerOptions = {}) {
                 return ts.ScriptSnapshot.fromString(data);
             }
             if (!_existsSync(filepath) && filepath.indexOf('node_modules/typescript/lib') !== -1 && parseFloat(ts.version) >= 2) {
-                var basename = Path.basename(filepath);
-                filepath = `${Path.dirname(filepath)}/lib.${basename}`;
+                var basename = path.basename(filepath);
+                filepath = `${path.dirname(filepath)}/lib.${basename}`;
             }
             // TODO: Too slow. Read package.json and restrict finding.
             if (!_existsSync(filepath)) {
