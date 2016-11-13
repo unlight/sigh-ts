@@ -45,6 +45,23 @@ test("general", t => {
 	});
 });
 
+test("ts v2", t => {
+	var tsconfigData = {
+		"compilerOptions": {
+			"target": "es6",
+			"module": "commonjs",
+			"lib": ['es2017']
+		}
+	};
+	fs.writeFileSync(tsconfigFile, JSON.stringify(tsconfigData));
+	var op = {stream: t.context.stream, procPool: t.context.procPool};
+	var options = {};
+	return lib(op, options).toPromise().then(events => {
+		var data = get(events, "0.data");
+		
+	});
+});
+
 test.after.always("cleanup", t => {
 	if (fs.existsSync(tsconfigFile)) {
 		fs.unlinkSync(tsconfigFile);	

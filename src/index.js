@@ -20,14 +20,20 @@ export default function (op, compilerOptions = {}) {
         getScriptFileNames: () => [typingsIndex, ...Object.keys(files)],
         getScriptVersion: (filepath) => files[filepath] && files[filepath].version.toString(),
         getScriptSnapshot: (filepath) => {
-            var data = "";
+            var data;
             if (files[filepath]) {
                 data = files[filepath].data;
-            } else if (!_existsSync(filepath)) {
-                return undefined;
-            } else {
-                data = _readFileSync(filepath, "utf8");
+                return ts.ScriptSnapshot.fromString(data);
             }
+            if (!_existsSync(filepath) && filepath.indexOf('node_modules/typescript/lib') !== -1 && parseFloat(ts.version) >= 2) {
+                var basename = Path.basename(filepath);
+                filepath = `${Path.dirname(filepath)}/lib.${basename}`;
+            }
+            // TODO: Too slow. Read package.json and restrict finding.
+            if (!_existsSync(filepath)) {
+                return undefined;
+            }
+            data = _readFileSync(filepath).toString();
             return ts.ScriptSnapshot.fromString(data);
         },
         getCurrentDirectory: _.constant(process.cwd()),
