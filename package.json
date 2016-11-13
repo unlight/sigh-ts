@@ -1,6 +1,6 @@
 {
   "name": "sigh-ts",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "A sigh plugin to compile typescript files.",
   "main": "./lib",
   "scripts": {
