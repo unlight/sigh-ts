@@ -148,7 +148,7 @@ test("typings definitions should be used", t => {
         ]),
         procPool: t.context.procPool
     };
-    var options = { target: "es5", "module": "commonjs", moduleResolution: "node" };
+    var options = { target: "es5", "module": "commonjs", moduleResolution: "node", "types": ["node"] };
     options.logd = function(messageList) {
         var text = _.get(messageList, '0.messageText');
         if (text) t.fail(text);

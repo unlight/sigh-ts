@@ -10,6 +10,7 @@ var fs = require("fs");
 
 var rootDirectory = pkgDir.sync();
 var tsconfigFile = rootDirectory + "/tsconfig.json";
+var tsconfigFileBak = tsconfigFile + '.bak';
 		
 test.beforeEach(t => {
 	var data = "export enum Hello {WORLD = 1}";
@@ -23,6 +24,12 @@ test.beforeEach(t => {
 	t.context.data = data;
 	t.context.stream = Bacon.constant([event]);
 	t.context.procPool = new ProcessPool();
+});
+
+test.before("backup tsconfig", t => {
+	if (fs.existsSync(tsconfigFile)) {
+		fs.renameSync(tsconfigFile, tsconfigFileBak);
+	}
 });
 
 test.afterEach(t => {
@@ -63,7 +70,7 @@ test("ts v2", t => {
 });
 
 test.after.always("cleanup", t => {
-	if (fs.existsSync(tsconfigFile)) {
-		fs.unlinkSync(tsconfigFile);	
+	if (fs.existsSync(tsconfigFileBak)) {
+		fs.renameSync(tsconfigFileBak, tsconfigFile);
 	}
 });

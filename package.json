@@ -1,10 +1,12 @@
 {
   "name": "sigh-ts",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "A sigh plugin to compile typescript files.",
   "main": "./lib",
+  "typings": "./lib/index.d.ts",
   "scripts": {
-    "test": "ava --serial --verbose"
+    "test": "ava --serial --verbose",
+    "tsc": "tsc"
   },
   "license": "Xnet",
   "peerDependencies": {
@@ -16,18 +18,15 @@
     "sigh-core": "^0.11.14"
   },
   "devDependencies": {
-    "ava": "0.16.0",
-    "babel": "^6.5.2",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.11.5",
+    "@types/lodash": "4.14.39",
+    "@types/node": "6.0.48",
+    "ava": "0.17.0",
     "process-pool": "^0.3.4",
-    "sigh": "^0.12.32",
-    "sigh-ava": "^0.3.1",
-    "sigh-babel": "^0.12.1",
-    "typescript": "2.0.9"
+    "typescript": "2.1.1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/unlight/sigh-ts.git"
+    "url": "https://github.com/unlight/sigh-ts.git"
   },
   "ava": {
     "require": [
@@ -40,7 +39,6 @@
     "sigh-plugin",
     "typescript"
   ],
-  "author": "S",
   "bugs": {
     "url": "https://github.com/unlight/sigh-ts/issues"
   },
