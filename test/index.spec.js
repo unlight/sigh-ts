@@ -14,7 +14,7 @@ test.beforeEach(t => {
     });
     t.context.event = event;
     t.context.stream = Bacon.constant([event]);
-    t.context.procPool = new ProcessPool();
+    t.context.procPool = new ProcessPool({ processLimit: 1 });
 });
 
 test.afterEach(t => {
@@ -25,11 +25,12 @@ test("smoke test", t => {
     t.truthy(lib);
 });
 
-test("options", t => {
+test.only("options", t => {
     var op = { stream: t.context.stream, procPool: t.context.procPool };
     var options = { target: "es6", "module": "es2015", reportDiagnostics: true };
     return lib(op, options).toPromise().then(events => {
         var data = _.get(events, "0.data");
+        console.log('data', JSON.stringify(data));
         t.truthy(data.indexOf('export var Hello') !== -1);
     });
 });
