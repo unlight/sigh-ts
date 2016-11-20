@@ -14,10 +14,10 @@ const typingsIndex = Path.resolve(npmPackage, "typings/index.d.ts");
 export default function(op, compilerOptions: ts.CompilerOptions = {}) {
     const tsconfigFile = Path.join(npmPackage, "tsconfig.json");
     compilerOptions = utils.getCompilerOptions(tsconfigFile, compilerOptions);
-    const logd = _.get(compilerOptions, "logd", utils.logDiagnostics);
     const files: FileInfoDictionary = {};
     const service = utils.createLanguageService({ files, tsconfigFile, compilerOptions, typingsIndex })
 
+    const logd = _.get(compilerOptions, "logd", utils.logDiagnostics);
     logd(service.getCompilerOptionsDiagnostics());
 
     function eventCallback(event: SighEvent, index, events: SighEvent[]) {
