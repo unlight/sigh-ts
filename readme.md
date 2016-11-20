@@ -22,6 +22,7 @@ referencing to [typescript compiler options](http://www.typescriptlang.org/docs/
 
 CHANGELOG
 ---------
+* 0.0.16 (20 Nov 2016) switched to typescript compiler (was babel)
 * 0.0.15 (13 Nov 2016) fixed ReferenceError: Path is not defined
 * 0.0.14 (13 Nov 2016) fixed error cannot find std lib for TS 2
 * 0.0.13 (13 Sep 2016) memoized getScriptSnapshot, added typings support
@@ -37,3 +38,7 @@ CHANGELOG
 * 0.0.3 (18 May 2016) updated examples
 * 0.0.2 (18 May 2016) allow specify all options of typescript
 * 0.0.1 (12 Dec 2015) first release
+
+TODO
+----
+* remove map file

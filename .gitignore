@@ -1,3 +1,6 @@
 /node_modules
 ~*
 /typings/
+*.sublime-project
+*.sublime-workspace
+/npm-debug.log
