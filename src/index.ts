@@ -16,7 +16,7 @@ export default function(op, compilerOptions: ts.CompilerOptions = {}) {
     compilerOptions = utils.getCompilerOptions(tsconfigFile, compilerOptions);
     const logd = _.get(compilerOptions, "logd", utils.logDiagnostics);
     const files: FileInfoDictionary = {};
-    const service = utils.createLanguageService({files, tsconfigFile, compilerOptions, typingsIndex})
+    const service = utils.createLanguageService({ files, tsconfigFile, compilerOptions, typingsIndex })
 
     logd(service.getCompilerOptionsDiagnostics());
 
@@ -40,9 +40,8 @@ export default function(op, compilerOptions: ts.CompilerOptions = {}) {
                     event.applySourceMap(JSON.parse(mapFile.text));
                 }
                 if (dtsFile) {
-                    let fields: any = _.pick(event, ["type", "basePath", "data", "path"]);
-                    fields.data = dtsFile.text;
-                    let newEvent = new Event(fields);
+                    let {type, basePath, path} = event;
+                    let newEvent = new Event({ type, basePath, path, data: dtsFile.text });
                     newEvent.changeFileSuffix("d.ts");
                     events.push(newEvent);
                     info.dtsFile = newEvent.path;
