@@ -6,45 +6,17 @@ import * as ts from "typescript";
 import * as _ from "lodash";
 import * as utils from "./utils";
 import { SighEvent } from './event.interface';
-import { FileInfo } from './file-info';
+import { FileInfo, FileInfoDictionary } from './file-info';
 
 const npmPackage = pkgDir.sync();
 const typingsIndex = Path.resolve(npmPackage, "typings/index.d.ts");
 
-export default function(op, compilerOptions = {}) {
+export default function(op, compilerOptions: ts.CompilerOptions = {}) {
     const tsconfigFile = Path.join(npmPackage, "tsconfig.json");
     compilerOptions = utils.getCompilerOptions(tsconfigFile, compilerOptions);
     const logd = _.get(compilerOptions, "logd", utils.logDiagnostics);
-    const files: { [path: string]: FileInfo } = {};
-    const _existsSync = _.memoize(existsSync);
-    const _readFileSync = _.memoize(readFileSync);
-    // Create the language service host to allow the LS to communicate with the host
-    const servicesHost = {
-        getScriptFileNames: () => [typingsIndex, ...Object.keys(files)],
-        getScriptVersion: (filepath) => files[filepath] && files[filepath].version.toString(),
-        getScriptSnapshot: (filepath) => {
-            let data;
-            if (files[filepath]) {
-                data = files[filepath].data;
-                return ts.ScriptSnapshot.fromString(data);
-            }
-            if (!_existsSync(filepath) && filepath.indexOf('node_modules/typescript/lib') !== -1 && parseFloat(ts.version) >= 2) {
-                let basename = Path.basename(filepath);
-                filepath = `${Path.dirname(filepath)}/lib.${basename}`;
-            }
-            // TODO: Too slow. Read package.json and restrict finding.
-            if (!_existsSync(filepath)) {
-                return undefined;
-            }
-            data = _readFileSync(filepath).toString();
-            return ts.ScriptSnapshot.fromString(data);
-        },
-        getCurrentDirectory: _.constant(process.cwd()),
-        getCompilationSettings: _.constant(compilerOptions),
-        getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
-    };
-    // Create the language service files
-    const service = ts.createLanguageService(servicesHost, ts.createDocumentRegistry());
+    const files: FileInfoDictionary = {};
+    const service = utils.createLanguageService({files, tsconfigFile, compilerOptions, typingsIndex})
 
     logd(service.getCompilerOptionsDiagnostics());
 

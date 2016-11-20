@@ -7,3 +7,9 @@ export declare function parseOutputFiles(outputFiles: ts.OutputFile[]): {
     mapFile: ts.OutputFile;
     dtsFile: ts.OutputFile;
 };
+export declare function createLanguageService({files, tsconfigFile, compilerOptions, typingsIndex}: {
+    files: any;
+    tsconfigFile: any;
+    compilerOptions: any;
+    typingsIndex: any;
+}): ts.LanguageService;

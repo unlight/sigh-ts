@@ -10,3 +10,5 @@ export class FileInfo {
 		this.dtsFile = dtsFile;
 	}
 }
+
+export type FileInfoDictionary = { [path: string]: FileInfo };

@@ -8,3 +8,6 @@ export declare class FileInfo {
         dtsFile: any;
     });
 }
+export declare type FileInfoDictionary = {
+    [path: string]: FileInfo;
+};
