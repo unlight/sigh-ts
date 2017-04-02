@@ -1,5 +1,7 @@
 sigh-ts
 =======
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/unlight/sigh-ts.svg)](https://greenkeeper.io/)
 A sigh plugin to compile typescript files.
 
 EXAMPLE
